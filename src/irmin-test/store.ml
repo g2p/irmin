@@ -100,15 +100,11 @@ module Make (S: S) = struct
     | Some t3 -> S.Commit.v repo ~info:Irmin.Info.empty  ~parents:[kr1] t3
 
   let run x test =
-    try
       Lwt_main.run (
         x.init () >>= fun () ->
         S.Repo.v x.config >>= fun repo ->
         test repo >>= x.clean
       )
-    with e ->
-      Lwt_main.run (x.clean ());
-      raise e
 
   let random_value value = random_string value
 
