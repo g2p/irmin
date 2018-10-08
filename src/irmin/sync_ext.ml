@@ -88,7 +88,9 @@ module Make (S: S.STORE) = struct
       let min = convs S.(commit_t s_repo) R.(commit_t r_repo) min in
       begin
         R.Head.find r >>= function
-        | None   -> Lwt.return (Error `No_head)
+        | None   ->
+          Logs.err (fun f -> f "no remote head");
+          Lwt.return (Error `No_head)
         | Some h ->
           R.Repo.export (R.repo r) ?depth ~min ~max:[h] >>= fun r_slice ->
           convert_slice (module R.Private) (module S.Private) r_slice
